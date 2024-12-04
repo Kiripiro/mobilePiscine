@@ -1,63 +1,53 @@
-import { Tabs } from 'expo-router';
-import { Platform, View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { TabView, SceneMap } from 'react-native-tab-view';
 
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import Header from '@/components/Header';
+import ThemedTabBar from '@/components/ui/ThemedTabBar';
+
+// Importez vos écrans actuels
+import HomeScreen from './index';
+import TabTwoScreen from './today';
+import TabThreeScreen from './weekly';
+import { IconSymbolName } from '@/components/ui/IconSymbol';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const [index, setIndex] = useState(0);
+
+  const routes = [
+    { key: 'index', title: 'Currently', icon: 'calendar.day.timeline.leading' as IconSymbolName },
+    { key: 'today', title: 'Today', icon: 'calendar.circle' as IconSymbolName},
+    { key: 'weekly', title: 'Weekly', icon: 'calendar' as IconSymbolName},
+  ];
+
+  const renderScene = SceneMap({
+    index: HomeScreen,
+    today: TabTwoScreen,
+    weekly: TabThreeScreen,
+  });
 
   return (
-    <View style={[styles.container, {backgroundColor: Colors[colorScheme ?? 'light'].tint}]}>
+    <SafeAreaView style={styles.container}>
       <Header
         onSearch={(text: string) => console.log('Recherche :', text)}
         onGeoLocate={() => console.log('Géolocalisation en cours...')}
       />
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-          headerShown: false,
-          tabBarBackground: TabBarBackground,
-          tabBarStyle: Platform.select({
-            ios: {
-              position: 'absolute',
-            },
-            default: {},
-          }),
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Currently',
-            tabBarIcon: ({ color }: { color: string }) => (
-              <IconSymbol size={28} name="calendar.day.timeline.leading" color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="today"
-          options={{
-            title: 'Today',
-            tabBarIcon: ({ color }: { color: string }) => (
-              <IconSymbol size={28} name="calendar.circle" color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="weekly"
-          options={{
-            title: 'Weekly',
-            tabBarIcon: ({ color }: { color: string }) => (
-              <IconSymbol size={28} name="calendar" color={color} />
-            ),
-          }}
-        />
-      </Tabs>
-    </View>
+      <TabView
+        tabBarPosition="bottom"
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        renderTabBar={(props) => (
+          <ThemedTabBar
+            navigationState={props.navigationState}
+            index={index}
+            onTabPress={setIndex}
+          />
+        )}
+      />
+    </SafeAreaView>
   );
 }
 
