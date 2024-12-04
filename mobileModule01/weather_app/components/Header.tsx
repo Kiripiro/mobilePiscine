@@ -4,8 +4,10 @@ import { ThemedView } from './ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedSafeAreaView } from './ThemedSafeArea';
 import { ThemedTextInput } from './ThemedTextInput';
+import { useTextContext } from '@/hooks/useTextContext';
 
-const Header = ({ onSearch, onGeoLocate }: { onSearch: any, onGeoLocate(): void }) => {
+const Header = () => {
+  const { setGeolocationText } = useTextContext();
 
   return (
     <ThemedSafeAreaView>
@@ -13,9 +15,8 @@ const Header = ({ onSearch, onGeoLocate }: { onSearch: any, onGeoLocate(): void 
         <ThemedTextInput
           style={styles.searchBar}
           placeholder="Search location..."
-          onChangeText={onSearch}
         />
-        <TouchableOpacity style={styles.geoButton} onPress={onGeoLocate}>
+        <TouchableOpacity style={styles.geoButton} onPress={setGeolocationText}>
           <IconSymbol size={28} name="location.fill" color={'white'} />
         </TouchableOpacity>
       </ThemedView>

@@ -1,5 +1,6 @@
-import { TextInput, type TextInputProps, StyleSheet } from 'react-native';
-
+import React from 'react';
+import { TextInput, type TextInputProps, StyleSheet, Keyboard} from 'react-native';
+import { useTextContext } from '@/hooks/useTextContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextProps = TextInputProps & {
@@ -16,11 +17,17 @@ export function ThemedTextInput({
     ...rest
 }: ThemedTextProps) {
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+    const { inputText, setInputText, saveText } = useTextContext();
+
+    const handleEnterPress = () => {
+        saveText();
+        Keyboard.dismiss();
+    };
 
     return (
-        <TextInput
+        <TextInput maxLength={85}
             style={[
-                { color },
+                { color, height: 40},
                 type === 'default' ? styles.default : undefined,
                 type === 'title' ? styles.title : undefined,
                 type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
@@ -28,9 +35,15 @@ export function ThemedTextInput({
                 type === 'link' ? styles.link : undefined,
                 style,
             ]}
+            value={inputText}
+            onChangeText={setInputText}
+            placeholder="Search a location..."
+            returnKeyType="done"
+            onSubmitEditing={handleEnterPress}
             {...rest}
         />
     );
+
 }
 
 const styles = StyleSheet.create({

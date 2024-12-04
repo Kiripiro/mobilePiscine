@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
@@ -39,11 +39,9 @@ export default function ThemedTabBar({
 
 const styles = StyleSheet.create({
   tabBar: {
+    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    paddingVertical: 10,
+    paddingBottom: 10
   },
 });
