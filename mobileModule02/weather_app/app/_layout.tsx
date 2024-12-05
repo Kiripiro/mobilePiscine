@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import TextContextProvider from '@/hooks/useTextContext';
+import TextContextProvider from '@/hooks/useWeatherContext';
 import { Host } from 'react-native-portalize';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -33,28 +33,29 @@ export default function RootLayout() {
   }
 
   return (
-    <TextContextProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Host>
-        <Stack screenOptions={{gestureEnabled: true}}>
-          <Stack.Screen 
-          name="(tabs)" 
-          options={{ 
-            headerShown: false, 
-            gestureEnabled: true, 
-            gestureDirection: 'horizontal' 
-          }} />
-          <Stack.Screen 
-          name="+not-found" 
-          options={{
-            gestureEnabled: true,
-          }} />
-        </Stack>
-        <StatusBar style="auto" />
-    </Host>
-      </ThemeProvider>
-      </GestureHandlerRootView>
-    </TextContextProvider>
+      <TextContextProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Host>
+              <Stack
+                screenOptions={{ gestureEnabled: true }}>
+                <Stack.Screen
+                  name="(tabs)"
+                  options={{
+                    headerShown: false,
+                    gestureEnabled: true,
+                    gestureDirection: 'horizontal'
+                  }} />
+                <Stack.Screen
+                  name="+not-found"
+                  options={{
+                    gestureEnabled: true,
+                  }} />
+              </Stack>
+              <StatusBar style="auto" />
+            </Host>
+          </ThemeProvider>
+        </GestureHandlerRootView>
+      </TextContextProvider>
   );
 }

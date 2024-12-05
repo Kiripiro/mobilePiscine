@@ -13,7 +13,6 @@ import HomeScreen from './index';
 import TabTwoScreen from './today';
 import TabThreeScreen from './weekly';
 
-
 export default function TabLayout() {
   const [index, setIndex] = useState(0);
   const colorScheme = useColorScheme();

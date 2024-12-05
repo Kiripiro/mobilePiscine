@@ -2,11 +2,11 @@ import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { useTextContext } from '@/hooks/useTextContext';
+import { useWeatherContext } from '@/hooks/useWeatherContext';
 import React from 'react';
 
 export default function TabTwoScreen() {
-  const { text } = useTextContext();
+  const { text } = useWeatherContext();
   return (
     <ThemedView style={styles.viewContainer}>
       <ThemedText>Today</ThemedText>

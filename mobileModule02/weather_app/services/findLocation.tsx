@@ -1,19 +1,26 @@
 export const functionFindLocation = async (name: string): Promise<Location[]> => {
-  if (!name) {
+  if (!name.trim() || name.length < 2) {
     return [];
   }
+
   try {
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=10&language=en&format=json`
     );
 
     if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.status} ${response.statusText}`);
+      console.error(`Error fetching data: ${response.status} ${response.statusText}`);
+      return [];
     }
 
     const data = await response.json();
 
-    const transformedData: Location[] = data.results.map((item: any) => ({
+    if (!data.results) {
+      console.warn('No results found for the query.');
+      return [];
+    }
+
+    return data.results.map((item: any) => ({
       id: item.id,
       name: item.name,
       admin1: item.admin1,
@@ -23,8 +30,6 @@ export const functionFindLocation = async (name: string): Promise<Location[]> =>
       longitude: item.longitude,
       timezone: item.timezone,
     }));
-
-    return transformedData;
   } catch (error) {
     console.error("Error fetching location data:", error);
     return [];

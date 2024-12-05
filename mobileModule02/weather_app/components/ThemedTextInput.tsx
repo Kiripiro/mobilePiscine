@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextInput, type TextInputProps, StyleSheet, Keyboard} from 'react-native';
-import { useTextContext } from '@/hooks/useTextContext';
+import { useWeatherContext } from '@/hooks/useWeatherContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextProps = TextInputProps & {
@@ -17,7 +17,7 @@ export function ThemedTextInput({
     ...rest
 }: ThemedTextProps) {
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-    const { inputText, setInputText, saveText } = useTextContext();
+    const { inputText, setInputText, saveText } = useWeatherContext();
 
     const handleEnterPress = () => {
         saveText();
