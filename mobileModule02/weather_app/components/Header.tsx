@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { TouchableOpacity, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { ThemedView } from './ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedSafeAreaView } from './ThemedSafeArea';
@@ -7,18 +7,18 @@ import { ThemedTextInput } from './ThemedTextInput';
 import { ThemedText } from './ThemedText';
 import { useWeatherContext } from '@/hooks/useWeatherContext';
 import { FlatList, Pressable } from 'react-native-gesture-handler';
-import { functionFindLocation } from '@/services/findLocation';
+import { findLocation } from '@/services/findLocation';
 import { Portal } from 'react-native-portalize';
 
 const Header = () => {
-  const { inputText, setGeolocationText, saveText, setInputText, updateWeatherConditions } =
+  const { inputLocation, setGeolocationText, saveLocation, setinputLocation, updateWeatherConditions } =
     useWeatherContext();
   const [data, setData] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchCities = useCallback(async () => {
-    if (!inputText.trim()) {
+    if (!inputLocation.trim()) {
       setData([]);
       return;
     }
@@ -26,23 +26,22 @@ const Header = () => {
     try {
       setLoading(true);
       setError(null);
-      const results = await functionFindLocation(inputText);
+      const results = await findLocation(inputLocation);
       setData(results);
     } catch (err) {
       setError("An error occurred while fetching locations.");
     } finally {
       setLoading(false);
     }
-  }, [inputText]);
+  }, [inputLocation]);
 
   useEffect(() => {
     fetchCities();
   }, [fetchCities]);
 
   const handleSelectCity = async (location: Location) => {
-    const formattedText = `${location.name}, ${location.admin1}, ${location.country}`;
-    console.log('Selected city:', formattedText);
-    saveText(formattedText);
+    const formattedLocation = `${location.name}, ${location.admin1}, ${location.country}`;
+    saveLocation(formattedLocation);
     try {
       await updateWeatherConditions(location);
     } catch (err) {
@@ -51,13 +50,13 @@ const Header = () => {
   };
 
   return (
-    <ThemedSafeAreaView style={{ flex: 1 }}>
+    <ThemedSafeAreaView style={styles.safeContainer}>
       <ThemedView style={styles.container}>
         <ThemedView style={styles.searchContainer}>
           <ThemedTextInput
             style={styles.searchBar}
             placeholder="Search location..."
-            value={inputText}
+            value={inputLocation}
             onSubmitEditing={() => {
               if (data.length > 0) {
                 handleSelectCity(data[0]);
@@ -76,7 +75,7 @@ const Header = () => {
                 pointerEvents="box-none"
                 style={styles.list}
                 data={data}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => (item.name ? item.name : '')}
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <Pressable onPress={() => handleSelectCity(item)}>
@@ -87,15 +86,20 @@ const Header = () => {
             </Portal>
           )}
         </ThemedView>
+        <Portal>
         <TouchableOpacity style={styles.geoButton} onPress={setGeolocationText}>
           <IconSymbol size={28} name="location.fill" color={'white'} />
         </TouchableOpacity>
+        </Portal>
       </ThemedView>
     </ThemedSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    flex: 0.25
+  },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -109,12 +113,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginRight: 10,
     height: 50,
+    width: '85%',
   },
   list: {
-    flex: 1,
     position: 'absolute',
     width: '100%',
-    marginTop: 110,
+    marginTop: 70,
     height: 200,
     elevation: 1,
     paddingHorizontal: 10,
@@ -130,6 +134,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#03dac6',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'absolute',
+    right: 15,
+    top: 15,
     marginLeft: 10,
   },
   errorText: {

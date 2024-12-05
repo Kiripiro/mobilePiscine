@@ -1,4 +1,4 @@
-type WeatherMetric = string | number;
+type WeatherMetric = number;
 
 interface WeatherBase {
   temperature: WeatherMetric;
@@ -9,7 +9,7 @@ interface WeatherBase {
 interface CurrentWeather extends WeatherBase {}
 
 interface TodayWeather {
-  time: Date | undefined;
+  time: Date[] | undefined;
   temperature: WeatherMetric[];
   description: string[];
   windSpeed: WeatherMetric[];

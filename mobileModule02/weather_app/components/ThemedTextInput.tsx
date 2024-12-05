@@ -17,7 +17,7 @@ export function ThemedTextInput({
     ...rest
 }: ThemedTextProps) {
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-    const { inputText, setInputText, saveText } = useWeatherContext();
+    const { inputLocation, setinputLocation, saveText } = useWeatherContext();
 
     const handleEnterPress = () => {
         saveText();
@@ -35,8 +35,8 @@ export function ThemedTextInput({
                 type === 'link' ? styles.link : undefined,
                 style,
             ]}
-            value={inputText}
-            onChangeText={setInputText}
+            value={inputLocation}
+            onChangeText={setinputLocation}
             placeholder="Search a location..."
             returnKeyType="done"
             onSubmitEditing={handleEnterPress}

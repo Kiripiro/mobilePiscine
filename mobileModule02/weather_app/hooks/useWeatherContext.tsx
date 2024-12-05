@@ -1,13 +1,16 @@
-import React, { ReactNode, createContext, useContext, useState } from 'react';
-import { getCurrentLocation } from '@/services/getCurrentLocation';
-import { getWeather } from '@/services/getWeather'; // Assurez-vous que le chemin est correct
+import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { getCurrentCoordinates } from '@/services/getCurrentCoordinates';
+import { getWeather } from '@/services/getWeather';
+import { requestForegroundPermissionsAsync } from '@/services/locationPermission';
 
 type WeatherContextType = {
-  inputText: string;
-  text: string;
-  setInputText: (input: string) => void;
+  inputLocation: string;
+  location: string;
+  setinputLocation: (input: string) => void;
+  geoLocationPermission: boolean;
+  setLocationPermission: (granted: boolean) => void;
   setGeolocationText: () => void;
-  saveText: (text?: string) => void;
+  saveLocation: (text?: string) => void;
   weatherConditions: WeatherConditions;
   updateWeatherConditions: (location: Location) => Promise<void>;
 };
@@ -27,8 +30,9 @@ export const useWeatherContext = () => {
 };
 
 function WeatherContextProvider({ children }: ContextProviderProps) {
-  const [inputText, setInputText] = useState<string>('');
-  const [text, setText] = useState<string>('');
+  const [geoLocationPermission , setGeoLocationPermission] = useState<boolean>(false);
+  const [inputLocation, setinputLocation] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
   const [weatherConditions, setWeatherConditions] = useState<WeatherConditions>({
     currentWeather: {
       temperature: 0,
@@ -49,9 +53,38 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
     },
   });
 
-  const saveText = (text: string = inputText) => {
-    setText(text);
-    setInputText('');
+  useEffect(() => {
+    askGeolocationPermission();
+  }, []);
+
+  const askGeolocationPermission = async (): Promise<void> => {
+    try {
+      console.log('requesting permission');
+      const response = await requestForegroundPermissionsAsync();
+      console.log('Permission response:', response);
+  
+      const permissionGranted = response.status === 'granted';
+      setGeoLocationPermission(permissionGranted);
+      console.log('Location permission:', permissionGranted);
+  
+      if (permissionGranted) {
+        await setGeolocationText();
+      } else {
+        console.error('Location permission not granted');
+      }
+    } catch (error) {
+      console.error('Error requesting geolocation permission:', error);
+    }
+  };
+  
+
+  const setLocationPermission = (granted: boolean) => {
+    setGeoLocationPermission(granted);
+  }
+
+  const saveLocation = (location: string = inputLocation) => {
+    setLocation(location);
+    setinputLocation('');
   };
 
   const updateWeatherConditions = async (location: Location) => {
@@ -70,8 +103,14 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
 
   const setGeolocationText = async () => {
     try {
-      const location = await getCurrentLocation();
-      setText(location.message);
+      const location = await getCurrentCoordinates();
+      if (typeof location === 'string') {
+        console.error('Error fetching coordinates:', location);
+        return;
+      }
+      setLocation(`${location.name}, ${location.admin1}, ${location.country}`);
+      updateWeatherConditions(location);
+
     } catch (error) {
       console.error('Error fetching location or weather data:', error);
     }
@@ -80,10 +119,12 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
   return (
     <WeatherContext.Provider
       value={{
-        inputText,
-        text,
-        setInputText,
-        saveText,
+        inputLocation,
+        location,
+        setinputLocation,
+        saveLocation,
+        geoLocationPermission,
+        setLocationPermission,
         setGeolocationText,
         weatherConditions,
         updateWeatherConditions,

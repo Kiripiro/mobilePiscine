@@ -1,4 +1,4 @@
-export const functionFindLocation = async (name: string): Promise<Location[]> => {
+export const findLocation = async (name: string): Promise<Location[]> => {
   if (!name.trim() || name.length < 2) {
     return [];
   }

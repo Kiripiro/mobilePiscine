@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 
@@ -8,12 +8,15 @@ import { IconSymbolName } from '@/components/ui/IconSymbol';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useWeatherContext } from '@/hooks/useWeatherContext';
+import * as Location from 'expo-location';
 
 import HomeScreen from './index';
 import TabTwoScreen from './today';
 import TabThreeScreen from './weekly';
 
 export default function TabLayout() {
+  const { geoLocationPermission, setLocationPermission, setGeolocationText } = useWeatherContext();
   const [index, setIndex] = useState(0);
   const colorScheme = useColorScheme();
   const backgroundColor = Colors[colorScheme ?? 'light'].background;

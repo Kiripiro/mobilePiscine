@@ -12,6 +12,7 @@ import { Host } from 'react-native-portalize';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import React from 'react';
+import * as Location from 'expo-location';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -22,9 +23,17 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  const askForLocationPermission = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.error('Location permission not granted');
+    }
+  }
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      askForLocationPermission();
     }
   }, [loaded]);
 
