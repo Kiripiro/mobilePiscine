@@ -8,7 +8,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import React from 'react';
 
 export default function TabThreeScreen() {
-  const { location, weatherConditions } = useWeatherContext();
+  const { location, weatherConditions, error } = useWeatherContext();
 
   const combinedData = weatherConditions.weeklyWeather.date?.map((date, index) => {
     return {
@@ -20,7 +20,6 @@ export default function TabThreeScreen() {
   }) || [];
 
   const renderItem = ({ item }: { item: { date: string; minTemperature: string, maxTemperature: string, description: string } }) => {
-    // retirer les caracteres a partir des : dans la description, si il y en a
     const description = item.description.split(':')[0];
     return (
       <ThemedView style={styles.row}>
@@ -33,7 +32,7 @@ export default function TabThreeScreen() {
   };
 
   return (
-    <ThemedView style={styles.viewContainer}>
+    <ThemedView style={error ? styles.errorContainer : styles.viewContainer}>
       {location && weatherConditions ? (
         <ThemedView style={styles.weatherContainer}>
           <ThemedText style={styles.locationText}>{location}</ThemedText>
@@ -46,13 +45,13 @@ export default function TabThreeScreen() {
           <FlatList
             showsVerticalScrollIndicator={false}
             data={combinedData}
-            keyExtractor={(_, index) => index.toString()}
+            keyExtractor={(item, index) => item.date ? item.date.toString() : Math.random().toString()}
             renderItem={renderItem}
           />
         </ThemedView>
       ) : (
-        <ThemedView style={styles.viewContainer}>
-          <ThemedText>Waiting...</ThemedText>
+        <ThemedView style={error && !location ? styles.errorContainer : styles.viewContainer}>
+          {error ? <ThemedText style={{color:'red'}}>{error}</ThemedText> : <ThemedText>Waiting...</ThemedText>}
         </ThemedView>
       )}
     </ThemedView>
@@ -85,5 +84,9 @@ const styles = StyleSheet.create({
   cell: {
     flex: 1,
     textAlign: 'center',
+  },
+  errorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

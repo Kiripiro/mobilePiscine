@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, StyleSheet, ActivityIndicator, Platform } from 'react-native';
 import { ThemedView } from './ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { ThemedSafeAreaView } from './ThemedSafeArea';
@@ -11,11 +11,11 @@ import { findLocation } from '@/services/findLocation';
 import { Portal } from 'react-native-portalize';
 
 const Header = () => {
-  const { inputLocation, setGeolocationText, saveLocation, setinputLocation, updateWeatherConditions } =
+  const { inputLocation, setGeolocationText, saveLocation, setinputLocation, updateWeatherConditions, error, setError } =
     useWeatherContext();
   const [data, setData] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [searchBarBottom, setSearchBarBottom] = useState(0);
 
   const fetchCities = useCallback(async () => {
     if (!inputLocation.trim()) {
@@ -52,80 +52,69 @@ const Header = () => {
   return (
     <ThemedSafeAreaView style={styles.safeContainer}>
       <ThemedView style={styles.container}>
-        <ThemedView style={styles.searchContainer}>
-          <ThemedTextInput
-            style={styles.searchBar}
-            placeholder="Search location..."
-            value={inputLocation}
-            onSubmitEditing={() => {
-              if (data.length > 0) {
-                handleSelectCity(data[0]);
-              }
-            }}
-          />
-          {loading && <ActivityIndicator size="small" color="#03dac6" />}
-          {error && (
-            <ThemedText style={styles.errorText}>
-              {error}
-            </ThemedText>
-          )}
-          {!loading && data.length > 0 && (
-            <Portal>
-              <FlatList
-                pointerEvents="box-none"
-                style={styles.list}
-                data={data}
-                keyExtractor={(item) => (item.name ? item.name : '')}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <Pressable onPress={() => handleSelectCity(item)}>
-                    <ThemedText style={styles.text}>{`${item.name}, ${item.admin1}, ${item.country}`}</ThemedText>
-                  </Pressable>
-                )}
-              />
-            </Portal>
-          )}
-        </ThemedView>
-        <Portal>
+        <ThemedTextInput
+          style={styles.searchBar}
+          placeholder="Search location..."
+          value={inputLocation}
+          onChangeText={setinputLocation}
+          onSubmitEditing={() => {
+            if (data.length > 0) {
+              handleSelectCity(data[0]);
+            }
+          }}
+          onLayout={(event) => {
+            const { height, y } = event.nativeEvent.layout;
+            setSearchBarBottom(y + height);
+          }}
+        />
         <TouchableOpacity style={styles.geoButton} onPress={setGeolocationText}>
           <IconSymbol size={28} name="location.fill" color={'white'} />
         </TouchableOpacity>
-        </Portal>
       </ThemedView>
+
+      {!loading && data.length > 0 && (
+        <Portal>
+          <FlatList
+            pointerEvents="box-none"
+            style={[
+              styles.list,
+              { top: searchBarBottom + (Platform.OS === 'ios' ? 50 : 10) },
+            ]}
+            data={data}
+            keyExtractor={(item, index) => `${item.latitude}-${index}`}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <Pressable onPress={() => handleSelectCity(item)}>
+                <ThemedText style={styles.text}>{`${item.name}, ${item.admin1}, ${item.country}`}</ThemedText>
+              </Pressable>
+            )}
+          />
+        </Portal>
+      )}
+
+      {loading && <ActivityIndicator size="small" color="#03dac6" />}
     </ThemedSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   safeContainer: {
-    flex: 0.25
+    flex: 0.25,
+    position: 'relative',
   },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-  },
-  searchContainer: {
-    flex: 1,
+    zIndex: 2,
   },
   searchBar: {
+    flex: 1,
     borderRadius: 10,
     paddingHorizontal: 15,
     marginRight: 10,
     height: 50,
-    width: '85%',
-  },
-  list: {
-    position: 'absolute',
-    width: '100%',
-    marginTop: 70,
-    height: 200,
-    elevation: 1,
-    paddingHorizontal: 10,
-    backgroundColor: '#9c9c9c',
-  },
-  text: {
-    paddingVertical: 10,
+    zIndex: 2,
   },
   geoButton: {
     width: 40,
@@ -134,22 +123,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#03dac6',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'absolute',
-    right: 15,
-    top: 15,
     marginLeft: 10,
+    zIndex: 2,
+  },
+  list: {
+    position: 'absolute',
+    left: 10,
+    right: 10,
+    maxHeight: 200,
+    backgroundColor: '#9c9c9c',
+    borderRadius: 10,
+    zIndex: 1,
+    elevation: 5,
+  },
+  text: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   errorText: {
     color: 'red',
-    marginTop: 5,
-  },
-  weatherContainer: {
-    marginTop: 20,
-    paddingHorizontal: 10,
-  },
-  weatherText: {
-    fontSize: 16,
-    marginVertical: 5,
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 

@@ -7,7 +7,7 @@ import React from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 
 export default function TabTwoScreen() {
-  const { location, weatherConditions } = useWeatherContext();
+  const { location, weatherConditions, error} = useWeatherContext();
 
   const combinedData = weatherConditions.todayWeather.time?.map((time, index) => {
     const date = new Date(time);
@@ -32,20 +32,20 @@ export default function TabTwoScreen() {
   };
 
   return (
-    <ThemedView style={styles.viewContainer}>
+    <ThemedView style={error ? styles.errorContainer : styles.viewContainer}>
       {location && weatherConditions ? (
         <ThemedView style={styles.weatherContainer}>
           <ThemedText style={styles.locationText}>{location}</ThemedText>
           <FlatList
             showsVerticalScrollIndicator={false}
             data={combinedData}
-            keyExtractor={(_, index) => index.toString()}
+            keyExtractor={(item, index) => item.time ? item.time.toString() : Math.random().toString()}
             renderItem={renderItem}
           />
         </ThemedView>
       ) : (
-        <ThemedView style={styles.viewContainer}>
-          <ThemedText>Waiting...</ThemedText>
+        <ThemedView style={error && !location ? styles.errorContainer : styles.viewContainer}>
+            {error ? <ThemedText style={{color:'red'}}>{error}</ThemedText> : <ThemedText>Waiting...</ThemedText>}
         </ThemedView>
       )}
     </ThemedView>
@@ -78,5 +78,9 @@ const styles = StyleSheet.create({
   cell: {
     flex: 1,
     textAlign: 'center',
+  },
+  errorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
