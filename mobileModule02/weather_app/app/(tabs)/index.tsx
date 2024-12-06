@@ -6,13 +6,13 @@ import React, { useEffect } from 'react';
 import { useWeatherContext } from '@/hooks/useWeatherContext';
 
 export default function HomeScreen() {
-  const { location, weatherConditions, error } = useWeatherContext();
+  const { inputLocation, location, weatherConditions, error } = useWeatherContext();
 
   useEffect(() => {
   }, [weatherConditions]);
   return (
     <>
-      {location && weatherConditions ? (
+      {location && weatherConditions && !error ? (
         <ThemedView style={styles.viewContainer}>
           <ThemedText style={{paddingHorizontal: 30}}>{location}</ThemedText>
           <ThemedText>{weatherConditions.currentWeather.description}</ThemedText>
@@ -21,7 +21,7 @@ export default function HomeScreen() {
         </ThemedView>
       ) : (
         <ThemedView style={styles.viewContainer}>
-          {error && !location  ? <ThemedText style={{color:'red'}}>{error}</ThemedText> : <ThemedText>Waiting...</ThemedText>}
+          {(error && inputLocation ) ? <ThemedText style={{color:'red'}}>{error}</ThemedText> : <ThemedText>Waiting...</ThemedText>}
         </ThemedView>
       )}
     </>

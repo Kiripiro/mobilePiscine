@@ -73,10 +73,9 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
         setError('Location permission not granted');
       }
     } catch (error) {
-      console.error('Error requesting geolocation permission:', error);
+      setError('Error requesting geolocation permission');
     }
   };
-  
 
   const setLocationPermission = (granted: string) => {
     setGeoLocationPermission(granted);
@@ -89,19 +88,19 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
 
   const updateWeatherConditions = async (location: Location) => {
     if (!location) {
-      console.error('Location not provided');
       return;
     }
     try {
       const weather = await getWeather(location);
       setWeatherConditions(weather);
     } catch (error) {
-      console.error('Error updating weather conditions:', error);
+      setError('Error fetching weather data');
     }
   };
 
   const setGeolocationText = async () => {
     try {
+      setError(null);
       const location = await getCurrentCoordinates();
       if (typeof location === 'string') {
         return;
@@ -110,7 +109,7 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
       updateWeatherConditions(location);
 
     } catch (error) {
-      console.error('Error fetching location or weather data:', error);
+      setError('Error fetching location or weather data');
     }
   };
 
