@@ -22,17 +22,16 @@ export default function ThemedTabBar({
   onTabPress,
 }: ThemedTabBarProps) {
   const colorScheme = useColorScheme();
-  const backgroundColor = Colors[colorScheme ?? 'light'].background;
 
   return (
-    <SafeAreaView style={[styles.tabBar, { backgroundColor }]}>
+    <SafeAreaView style={[styles.tabBar]}>
       {navigationState.routes.map((route, i) => {
         const color = index === i ? Colors[colorScheme ?? 'light'].tint : 'gray';
         return (
-          <TouchableOpacity key={i} onPress={() => onTabPress(i)}>
-            <IconSymbol size={28} name={route.icon} color={color} />
-             <ThemedText>{route.title}</ThemedText>
-          </TouchableOpacity>
+            <TouchableOpacity key={i} onPress={() => onTabPress(i)} style={styles.tabItem}>
+              <IconSymbol size={28} name={route.icon} color={color} />
+              <ThemedText>{route.title}</ThemedText>
+            </TouchableOpacity>
         );
       })}
     </SafeAreaView>
@@ -44,7 +43,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingBottom: 10
+    paddingBottom: 10,
+    marginTop: 10,
   },
   tabItem: {
     alignItems: 'center',
