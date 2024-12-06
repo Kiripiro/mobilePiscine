@@ -4,6 +4,7 @@ interface WeatherBase {
   temperature: WeatherMetric;
   description: string;
   windSpeed: WeatherMetric;
+  weatherCode: number;
 }
 
 interface CurrentWeather extends WeatherBase {}
@@ -13,6 +14,7 @@ interface TodayWeather {
   temperature: WeatherMetric[];
   description: string[];
   windSpeed: WeatherMetric[];
+  weatherCode: number[];
 }
 
 interface WeeklyWeather {
@@ -20,6 +22,7 @@ interface WeeklyWeather {
   minTemperature: WeatherMetric[];
   maxTemperature: WeatherMetric[];
   description: string[];
+  weatherCode: number[];
 }
 
 interface WeatherConditions {

@@ -41,18 +41,21 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
       temperature: 0,
       description: '',
       windSpeed: 0,
+      weatherCode: 0,
     },
     todayWeather: {
       time: undefined,
       temperature: [],
       description: [],
       windSpeed: [],
+      weatherCode: [],
     },
     weeklyWeather: {
       date: [],
       minTemperature: [],
       maxTemperature: [],
       description: [],
+      weatherCode: [],
     },
   });
 
@@ -92,8 +95,10 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
     }
     try {
       const weather = await getWeather(location);
+      console.log(weather);
       setWeatherConditions(weather);
     } catch (error) {
+      console.error('Failed to update weather conditions:', error);
       setError('Error fetching weather data');
     }
   };

@@ -1,36 +1,45 @@
-// This file is a fallback for using MaterialIcons on Android and web.
-
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SymbolWeight } from 'expo-symbols';
 import React from 'react';
-import { OpaqueColorValue, StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { OpaqueColorValue, StyleProp, TextStyle } from 'react-native';
 
-// Add your SFSymbol to MaterialIcons mappings here.
+// Add your SFSymbol to MaterialIcons/MaterialCommunityIcons mappings here.
 const MAPPING = {
   // See MaterialIcons here: https://icons.expo.fyi
   // See SF Symbols in the SF Symbols app on Mac.
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-  'calendar.day.timeline.leading': 'calendar-view-day',
-  'calendar.circle': 'calendar-today',
-  'calendar': 'calendar-month',
-  'location.fill': 'my-location',
-  'magnifyingglass': 'search',
+  'house.fill': { icon: 'home', type: 'MaterialIcons' },
+  'paperplane.fill': { icon: 'send', type: 'MaterialIcons' },
+  'chevron.left.forwardslash.chevron.right': { icon: 'code', type: 'MaterialIcons' },
+  'chevron.right': { icon: 'chevron-right', type: 'MaterialIcons' },
+  'calendar.day.timeline.leading': { icon: 'calendar-view-day', type: 'MaterialIcons' },
+  'calendar.circle': { icon: 'calendar-today', type: 'MaterialIcons' },
+  'calendar': { icon: 'calendar-month', type: 'MaterialIcons' },
+  'location.fill': { icon: 'my-location', type: 'MaterialIcons' },
+  'magnifyingglass': { icon: 'search', type: 'MaterialIcons' },
+  'sun.max.fill': { icon: 'wb-sunny', type: 'MaterialIcons' },
+  'cloud.sun.fill': { icon: 'wb-cloudy', type: 'MaterialIcons' },
+  'sun.rain.fill': { icon: 'umbrella', type: 'MaterialCommunityIcons' },
+  'cloud.bolt.fill': { icon: 'lightning-bolt', type: 'MaterialCommunityIcons' },
+  'cloud.fill': { icon: 'cloud', type: 'MaterialIcons' },
+  'thermometer': { icon: 'thermostat', type: 'MaterialIcons' },
+  'wind': { icon: 'weather-windy', type: 'MaterialCommunityIcons' },
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
-    React.ComponentProps<typeof MaterialIcons>['name']
+    {
+      icon: React.ComponentProps<typeof MaterialIcons | typeof MaterialCommunityIcons>['name'];
+      type: 'MaterialIcons' | 'MaterialCommunityIcons';
+    }
   >
 >;
 
 export type IconSymbolName = keyof typeof MAPPING;
 
 /**
- * An icon component that uses native SFSymbols on iOS, and MaterialIcons on Android and web. This ensures a consistent look across platforms, and optimal resource usage.
+ * An icon component that uses native SFSymbols on iOS, and MaterialIcons/MaterialCommunityIcons on Android and web.
  *
- * Icon `name`s are based on SFSymbols and require manual mapping to MaterialIcons.
+ * Icon `name`s are based on SFSymbols and require manual mapping to MaterialIcons or MaterialCommunityIcons.
  */
 export function IconSymbol({
   name,
@@ -44,5 +53,22 @@ export function IconSymbol({
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  const mapping = MAPPING[name];
+
+  if (!mapping) {
+    console.error(`No mapping found for icon name: ${name}`);
+    return null;
+  }
+
+  const { icon, type } = mapping;
+
+  if (type === 'MaterialIcons') {
+    return <MaterialIcons color={color} size={size} name={icon} style={style} />;
+  }
+
+  if (type === 'MaterialCommunityIcons') {
+    return <MaterialCommunityIcons color={color} size={size} name={icon} style={style} />;
+  }
+
+  return null;
 }

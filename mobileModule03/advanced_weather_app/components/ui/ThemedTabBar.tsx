@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { IconSymbol, IconSymbolName } from '@/components/ui/IconSymbol';
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingBottom: 10,
+    paddingBottom: Platform.OS === 'ios' ? -20 : 10,
     marginTop: 10,
   },
   tabItem: {
