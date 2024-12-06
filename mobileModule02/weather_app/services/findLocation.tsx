@@ -5,7 +5,7 @@ export const findLocation = async (name: string): Promise<Location[]> => {
 
   try {
     const response = await fetch(
-      `https://geocodin-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=10&language=en&format=json`
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=10&language=en&format=json`
     );
 
     if (!response.ok) {
