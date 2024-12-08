@@ -38,7 +38,7 @@ export default function TabLayout() {
       style={styles.background} 
       resizeMode="cover"
     >
-    <SafeAreaView style={[styles.container]}>
+    <SafeAreaView style={styles.container}>
       <Header />
       <TabView
         tabBarPosition="bottom"

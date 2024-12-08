@@ -5,9 +5,10 @@ export const getWeatherDescription = (code: number): string => {
   return weather ? weather.description : "Unknown weather condition";
 };
 
-
 async function getCurrentWeather(location: Location) {
-  const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,weather_code,wind_speed_10m`);
+  const response = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,weather_code,wind_speed_10m`
+  );
 
   const data = await response.json();
   return {
@@ -19,28 +20,35 @@ async function getCurrentWeather(location: Location) {
 }
 
 async function getTodayWeather(location: Location) {
-  const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&hourly=temperature_2m,weather_code,wind_speed_10m&forecast_days=1`);
+  const response = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&hourly=temperature_2m,weather_code,wind_speed_10m&forecast_days=1`
+  );
 
   const data = await response.json();
   return {
     time: data.hourly.time,
     temperature: data.hourly.temperature_2m,
-    description: data.hourly.weather_code.map((code: number) => getWeatherDescription(code)),
+    description: data.hourly.weather_code.map((code: number) =>
+      getWeatherDescription(code)
+    ),
     weatherCode: data.hourly.weather_code.map((code: number) => code),
     windSpeed: data.hourly.wind_speed_10m,
   };
 }
 
 async function getWeeklyWeather(location: Location) {
-  const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&daily=temperature_2m_max,temperature_2m_min,weather_code`);
+  const response = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&daily=temperature_2m_max,temperature_2m_min,weather_code`
+  );
 
   const data = await response.json();
-  console.log(data);
   return {
     date: data.daily.time,
     minTemperature: data.daily.temperature_2m_min,
     maxTemperature: data.daily.temperature_2m_max,
-    description: data.daily.weather_code.map((code: number) => getWeatherDescription(code)),
+    description: data.daily.weather_code.map((code: number) =>
+      getWeatherDescription(code)
+    ),
     weatherCode: data.daily.weather_code.map((code: number) => code),
   };
 }
@@ -49,8 +57,6 @@ export async function getWeather(location: Location) {
   const currentWeather = await getCurrentWeather(location);
   const todayWeather = await getTodayWeather(location);
   const weeklyWeather = await getWeeklyWeather(location);
-
-  console.log(currentWeather, todayWeather, weeklyWeather);
 
   return {
     currentWeather,
