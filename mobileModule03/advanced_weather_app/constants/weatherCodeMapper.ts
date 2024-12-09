@@ -41,26 +41,26 @@ export const weatherIconMapping: Record<number, string> = {
   1: "sun.max.fill", // Mainly clear
   2: "cloud.sun.fill", // Partly cloudy
   3: "cloud.fill", // Overcast
-  45: "cloud.fog", // Fog
-  48: "cloud.fog", // Depositing rime fog
-  51: "cloud.drizzle", // Drizzle: Light intensity
-  53: "cloud.drizzle", // Drizzle: Moderate intensity
-  55: "cloud.drizzle", // Drizzle: Dense intensity
-  61: "cloud.rain", // Rain: Slight intensity
-  63: "cloud.rain", // Rain: Moderate intensity
-  65: "cloud.rain", // Rain: Heavy intensity
-  66: "cloud.sleet", // Freezing Rain: Light intensity
-  67: "cloud.sleet", // Freezing Rain: Heavy intensity
-  71: "snowflake", // Snow: Slight intensity
-  73: "snowflake", // Snow: Moderate intensity
-  75: "snowflake", // Snow: Heavy intensity
-  77: "snowflake", // Snow grains
-  80: "cloud.rain", // Rain showers: Slight intensity
-  81: "cloud.rain", // Rain showers: Moderate intensity
-  82: "cloud.rain", // Rain showers: Violent intensity
-  95: "cloud.bolt", // Thunderstorm: Slight or moderate
-  96: "cloud.bolt.rain", // Thunderstorm with hail
-  99: "cloud.bolt.rain", // Thunderstorm with heavy hail
+  45: "cloud.fog.fill", // Fog
+  48: "cloud.fog.fill", // Depositing rime fog
+  51: "cloud.drizzle.fill", // Drizzle: Light intensity
+  53: "cloud.drizzle.fill", // Drizzle: Moderate intensity
+  55: "cloud.drizzle.fill", // Drizzle: Dense intensity
+  61: "cloud.rain.fill", // Rain: Slight intensity
+  63: "cloud.rain.fill", // Rain: Moderate intensity
+  65: "cloud.rain.fill", // Rain: Heavy intensity
+  66: "cloud.sleet.fill", // Freezing Rain: Light intensity
+  67: "cloud.sleet.fill", // Freezing Rain: Heavy intensity
+  71: "snowflake.fill", // Snow: Slight intensity
+  73: "snowflake.fill", // Snow: Moderate intensity
+  75: "snowflake.fill", // Snow: Heavy intensity
+  77: "snowflake.fill", // Snow grains
+  80: "cloud.rain.fill", // Rain showers: Slight intensity
+  81: "cloud.rain.fill", // Rain showers: Moderate intensity
+  82: "cloud.rain.fill", // Rain showers: Violent intensity
+  95: "cloud.bolt.fill", // Thunderstorm: Slight or moderate
+  96: "cloud.bolt.rain.fill", // Thunderstorm with hail
+  99: "cloud.bolt.rain.fill", // Thunderstorm with heavy hail
 };
 
 /**

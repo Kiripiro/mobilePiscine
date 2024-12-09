@@ -1,40 +1,31 @@
 import { StyleSheet, View } from "react-native";
-
 import { ThemedText } from "@/components/ThemedText";
 import { useWeatherContext } from "@/hooks/useWeatherContext";
-import React from "react";
-import { LineChart } from "react-native-gifted-charts";
+import React, { useEffect, useState } from "react";
 import WeatherCardSlider from "@/components/ui/WeatherCardSlider";
+import { CartesianChart, Area } from "victory-native";
+import { useFont } from "@shopify/react-native-skia";
+import spaceMono from "@/assets/fonts/SpaceMono-Regular.ttf";
 
 export default function TabTwoScreen() {
   const { location, weatherConditions, error } = useWeatherContext();
   const [city, region, country] = location ? location.split(",") : [];
+  const font = useFont(spaceMono, 10);
 
-  const formatData = (temperature: number[]): { value: number }[] => {
-    return temperature.map((temp, index) => {
-      return {
-        value: temp,
-      };
-    });
-  };
+  const temperatures = weatherConditions?.todayWeather?.temperature || [];
+  const [data, setData] = useState<{ hour: string; tmp: number }[]>([]);
 
-  const formatTime = (time: Date[]): string[] => {
-    if (!time) {
-      return [];
+  useEffect(() => {
+    if (temperatures.length > 0 && weatherConditions?.todayWeather?.time) {
+      const DATA = temperatures.map((temp, index) => ({
+        hour: weatherConditions.todayWeather.time
+          ? [index]?.toString() + "h"
+          : "",
+        tmp: temp,
+      }));
+      setData(DATA);
     }
-    return time.map((time) => {
-      const date = new Date(time);
-      const hours = date.toLocaleTimeString([], { hour: "2-digit" });
-      return (hours.startsWith("0") ? hours.slice(1) : hours) + "h";
-    });
-  };
-
-  const getFocusedDataPointIndex = () => {
-    if (!weatherConditions || !weatherConditions.todayWeather.time) return 0;
-
-    const now = new Date();
-    return now.getHours();
-  };
+  }, [temperatures, weatherConditions]);
 
   return (
     <View style={error ? styles.errorContainer : styles.viewContainer}>
@@ -48,37 +39,47 @@ export default function TabTwoScreen() {
               {region || "Unknown Region"}, {country || "Unknown Country"}
             </ThemedText>
             <ThemedText style={styles.text}>Today's temperatures</ThemedText>
-            <LineChart
-              data={formatData(weatherConditions.todayWeather.temperature)}
-              curved={true}
-              initialSpacing={0}
-              hideDataPoints
-              hideOrigin
-              thickness={5}
-              hideRules
-              yAxisColor="#0BA5A4"
-              xAxisColor="#0BA5A4"
-              yAxisLabelSuffix="°C"
-              yAxisTextStyle={{ color: "#0BA5A4" }}
-              xAxisLabelTexts={formatTime(
-                weatherConditions.todayWeather.time || []
-              )}
-              focusEnabled
-              scrollToIndex={getFocusedDataPointIndex()}
-              xAxisLabelTextStyle={{ color: "#0BA5A4", paddingLeft: 15 }}
-              showYAxisIndices
-              areaChart
-              yAxisIndicesColor="#0BA5A4"
-              color="#0BA5A4"
-              trimYAxisAtTop
-              mostNegativeValue={Math.min(
-                ...weatherConditions.todayWeather.temperature
-              )}
-            />
           </View>
+
+          {data.length > 0 ? (
+            <View style={styles.chart}>
+              <CartesianChart
+                data={data}
+                xKey="hour"
+                yKeys={["tmp"]}
+                xAxis={{
+                  font,
+                  labelColor: "black",
+                  lineColor: "lightgrey",
+                  tickCount: 12,
+                }}
+                yAxis={[
+                  {
+                    font,
+                    labelColor: "black",
+                    lineColor: "lightgrey",
+                    tickCount: 5,
+                  },
+                ]}
+              >
+                {({ points, chartBounds }) => (
+                  <Area
+                    points={points.tmp}
+                    y0={chartBounds.bottom}
+                    color="#03dac6"
+                    opacity={0.5}
+                    animate={{ type: "timing", duration: 300 }}
+                  />
+                )}
+              </CartesianChart>
+            </View>
+          ) : (
+            <ThemedText>Loading chart...</ThemedText>
+          )}
+
           <WeatherCardSlider
             date={weatherConditions.todayWeather.time || []}
-            temperature={weatherConditions.todayWeather.temperature}
+            temperature={temperatures}
             weatherCode={weatherConditions.todayWeather.weatherCode}
             windSpeed={weatherConditions.todayWeather.windSpeed}
             type="todayWeather"
@@ -110,9 +111,19 @@ const styles = StyleSheet.create({
   subContainer: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 16,
-    borderRadius: 16,
     alignItems: "center",
+    borderTopEndRadius: 16,
+    borderTopStartRadius: 16,
     justifyContent: "center",
+  },
+  chart: {
+    flex: 1,
+    width: "100%",
+    height: 300,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderBottomEndRadius: 16,
+    borderBottomStartRadius: 16,
+    paddingInline: 5,
   },
   weatherContainer: {
     flex: 1,
@@ -137,15 +148,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     lineHeight: 24,
     paddingVertical: 10,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 10,
-  },
-  cell: {
-    flex: 1,
-    textAlign: "center",
   },
   errorContainer: {
     alignItems: "center",

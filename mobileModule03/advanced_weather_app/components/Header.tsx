@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     left: 10,
     right: 10,
     maxHeight: 200,
-    backgroundColor: "#cfcdcc",
+    backgroundColor: "rgba(255, 255, 255, 1)",
     borderRadius: 10,
     zIndex: 1,
     elevation: 5,
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
   text: {
     paddingVertical: 10,
     paddingHorizontal: 15,
+    color: "black",
   },
   errorText: {
     color: "red",

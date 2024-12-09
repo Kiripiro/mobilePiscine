@@ -5,54 +5,92 @@ import { useWeatherContext } from "@/hooks/useWeatherContext";
 
 import React from "react";
 import WeatherCardSlider from "@/components/ui/WeatherCardSlider";
-import { LineChart } from "react-native-gifted-charts";
+import { CartesianChart, Line } from "victory-native";
+import { useFont } from "@shopify/react-native-skia";
+import spaceMono from "@/assets/fonts/SpaceMono-Regular.ttf";
+import { useEffect, useState } from "react";
 
 export default function TabThreeScreen() {
   const { location, weatherConditions, error } = useWeatherContext();
+  const font = useFont(spaceMono, 10);
 
-  console.log(Math.min(...weatherConditions.weeklyWeather.minTemperature));
+  const [city, region, country] = location ? location.split(",") : [];
+
+  const minTemperatures =
+    weatherConditions?.weeklyWeather?.minTemperature || [];
+  const maxTemperatures =
+    weatherConditions?.weeklyWeather?.maxTemperature || [];
+
+  const [data, setData] = useState<
+    { day: string; lowTmp: number; highTmp: number }[]
+  >([]);
+
+  useEffect(() => {
+    if (minTemperatures.length > 0 && maxTemperatures.length > 0) {
+      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const DATA = maxTemperatures.map((maxTemp, index) => {
+        const date = new Date();
+        date.setDate(date.getDate() + index);
+        const day = daysOfWeek[date.getDay()];
+        return {
+          day: day,
+          highTmp: maxTemperatures[index],
+          lowTmp: minTemperatures[index],
+        };
+      });
+      setData(DATA);
+    }
+  }, [minTemperatures, maxTemperatures]);
 
   return (
     <View style={error ? styles.errorContainer : styles.viewContainer}>
       {location && weatherConditions ? (
         <View style={styles.weatherContainer}>
           <View style={styles.subContainer}>
-            <ThemedText style={styles.locationText}>{location}</ThemedText>
-            <LineChart
-              dataSet={[
+            <ThemedText style={styles.cityText}>
+              {city || "Unknown City"}
+            </ThemedText>
+            <ThemedText style={styles.regionText}>
+              {region || "Unknown Region"}, {country || "Unknown Country"}
+            </ThemedText>
+            <ThemedText style={styles.text}>Weekly temperatures</ThemedText>
+          </View>
+          <View style={styles.chart}>
+            <CartesianChart
+              data={data}
+              xKey="day"
+              yKeys={["lowTmp", "highTmp"]}
+              xAxis={{
+                font,
+                labelColor: "black",
+                lineColor: "lightgrey",
+              }}
+              yAxis={[
                 {
-                  data: weatherConditions.weeklyWeather.minTemperature.map(
-                    (temp, index) => ({ value: temp, label: `${index}` })
-                  ),
-                  color: "#0BA5A4",
-                },
-                {
-                  data: weatherConditions.weeklyWeather.maxTemperature.map(
-                    (temp, index) => ({ value: temp + 5, label: `${index}` })
-                  ),
-                  color: "#FFC700",
+                  font,
+                  labelColor: "black",
+                  lineColor: "lightgrey",
+                  tickCount: 5,
                 },
               ]}
-              initialSpacing={0}
-              hideOrigin
-              thickness={3}
-              curved={true}
-              yAxisColor="#0BA5A4"
-              xAxisColor="#0BA5A4"
-              hideDataPoints
-              yAxisLabelSuffix="°C"
-              mostNegativeValue={Math.min(
-                ...weatherConditions.weeklyWeather.minTemperature
+            >
+              {({ points }) => (
+                <>
+                  <Line
+                    points={points.highTmp}
+                    color="#ff6347"
+                    strokeWidth={3}
+                    animate={{ type: "timing", duration: 300 }}
+                  />
+                  <Line
+                    points={points.lowTmp}
+                    color="#1E90FF"
+                    strokeWidth={3}
+                  />
+                </>
               )}
-              xAxisLabelTextStyle={{ color: "#0BA5A4", paddingLeft: 15 }}
-              showYAxisIndices
-              yAxisTextStyle={{ color: "#0BA5A4" }}
-              hideRules
-              color="#0BA5A4"
-              trimYAxisAtTop
-            />
+            </CartesianChart>
           </View>
-
           <WeatherCardSlider
             date={weatherConditions.weeklyWeather.date}
             temperature={weatherConditions.weeklyWeather.minTemperature}
@@ -87,9 +125,37 @@ const styles = StyleSheet.create({
   subContainer: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 16,
-    borderRadius: 16,
+    borderTopStartRadius: 16,
+    borderTopEndRadius: 16,
     alignItems: "center",
     justifyContent: "center",
+  },
+  cityText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
+  },
+  regionText: {
+    fontSize: 18,
+    color: "#777",
+    marginBottom: 12,
+  },
+  text: {
+    fontSize: 24,
+    color: "#777",
+    marginBottom: 12,
+    lineHeight: 24,
+    paddingVertical: 10,
+  },
+  chart: {
+    flex: 1,
+    width: "100%",
+    height: 300,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    borderBottomEndRadius: 16,
+    borderBottomStartRadius: 16,
+    paddingInline: 5,
   },
   weatherContainer: {
     flex: 1,

@@ -22,7 +22,6 @@ const WeatherCardSlider = ({
   type,
 }: WeatherCardProps) => {
   const convertedDates = date.map((dateString) => new Date(dateString));
-  console.log(temperature);
 
   return (
     <View>
@@ -31,11 +30,11 @@ const WeatherCardSlider = ({
           <View key={index} style={styles.cardContainer}>
             <ThemedText style={styles.dateText}>
               {type === "todayWeather"
-                ? d.toLocaleTimeString("fr-FR", {
+                ? d.toLocaleTimeString("en-EN", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })
-                : d.toLocaleDateString("fr-FR", {
+                : d.toLocaleDateString("en-EN", {
                     day: "numeric",
                     month: "short",
                   })}
