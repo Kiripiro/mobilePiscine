@@ -8,7 +8,8 @@ import { useFont } from "@shopify/react-native-skia";
 import spaceMono from "@/assets/fonts/SpaceMono-Regular.ttf";
 
 export default function TabTwoScreen() {
-  const { location, weatherConditions, error } = useWeatherContext();
+  const { location, inputLocation, weatherConditions, error } =
+    useWeatherContext();
   const [city, region, country] = location ? location.split(",") : [];
   const font = useFont(spaceMono, 10);
 
@@ -28,7 +29,7 @@ export default function TabTwoScreen() {
   }, [temperatures, weatherConditions]);
 
   return (
-    <View style={error ? styles.errorContainer : styles.viewContainer}>
+    <View style={styles.viewContainer}>
       {location && weatherConditions ? (
         <View style={styles.weatherContainer}>
           <View style={styles.subContainer}>
@@ -86,16 +87,14 @@ export default function TabTwoScreen() {
           />
         </View>
       ) : (
-        <View
-          style={
-            error && !location ? styles.errorContainer : styles.viewContainer
-          }
-        >
-          {error ? (
-            <ThemedText style={{ color: "red" }}>{error}</ThemedText>
-          ) : (
-            <ThemedText>Waiting...</ThemedText>
-          )}
+        <View style={styles.errorOrWaitingContainer}>
+          <View style={styles.errorOrWaitingSubContainer}>
+            {error ? (
+              <ThemedText style={styles.errorText}>{error}</ThemedText>
+            ) : (
+              <ThemedText style={styles.waitingText}>Waiting...</ThemedText>
+            )}
+          </View>
         </View>
       )}
     </View>
@@ -105,8 +104,8 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   viewContainer: {
     flex: 1,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
   },
   subContainer: {
     backgroundColor: "rgba(255, 255, 255, 0.8)",
@@ -114,6 +113,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderTopEndRadius: 16,
     borderTopStartRadius: 16,
+    justifyContent: "center",
+  },
+  subviewContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    padding: 16,
+    height: "100%",
+    borderRadius: 16,
+    alignItems: "center",
     justifyContent: "center",
   },
   chart: {
@@ -149,8 +156,32 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     paddingVertical: 10,
   },
-  errorContainer: {
+  errorOrWaitingContainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    width: "100%",
+    borderRadius: 16,
+    padding: 16,
+    margin: 16,
+  },
+  errorOrWaitingSubContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    padding: 16,
+    width: "100%",
+    height: "100%",
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  errorText: {
+    fontSize: 16,
+    color: "red",
+    textAlign: "center",
+  },
+  waitingText: {
+    fontSize: 16,
+    color: "#777",
+    textAlign: "center",
   },
 });

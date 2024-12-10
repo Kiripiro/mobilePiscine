@@ -25,12 +25,15 @@ const Header = () => {
     updateWeatherConditions,
     error,
     setError,
+    resetweatherConditions,
   } = useWeatherContext();
   const [data, setData] = useState<Location[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchBarBottom, setSearchBarBottom] = useState(0);
 
   const fetchCities = useCallback(async () => {
+    setError(null);
+
     if (!inputLocation.trim()) {
       setData([]);
       return;
@@ -40,9 +43,13 @@ const Header = () => {
       setLoading(true);
       setError(null);
       const results = await findLocation(inputLocation);
+      console.log("Results", results);
       setData(results);
-    } catch (err) {
-      setError("An error occurred while fetching locations.");
+    } catch (err: any) {
+      resetweatherConditions();
+
+      console.log("Error fetching cities", err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -58,7 +65,9 @@ const Header = () => {
     try {
       await updateWeatherConditions(location);
     } catch (err) {
+      resetweatherConditions();
       console.error("Failed to update weather conditions:", err);
+      setError("Error fetching weather data");
     }
   };
 

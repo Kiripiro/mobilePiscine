@@ -45,11 +45,15 @@ export default function HomeScreen() {
         </View>
       ) : (
         <View style={styles.viewContainer}>
-          {error && inputLocation ? (
-            <ThemedText style={styles.errorText}>{error}</ThemedText>
-          ) : (
-            <ThemedText>Waiting...</ThemedText>
-          )}
+          <View style={styles.subviewContainer}>
+            {error && !inputLocation ? (
+              <ThemedText style={styles.errorText}>{error}</ThemedText>
+            ) : error && inputLocation ? (
+              <ThemedText style={styles.errorText}>{error}</ThemedText>
+            ) : (
+              <ThemedText style={styles.waitingText}>Waiting...</ThemedText>
+            )}
+          </View>
         </View>
       )}
     </>
@@ -122,6 +126,11 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 16,
     color: "red",
+    textAlign: "center",
+  },
+  waitingText: {
+    fontSize: 16,
+    color: "#777",
     textAlign: "center",
   },
 });

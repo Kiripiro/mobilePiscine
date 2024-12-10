@@ -21,6 +21,7 @@ type WeatherContextType = {
   updateWeatherConditions: (location: Location) => Promise<void>;
   error: string | null;
   setError: (error: string | null) => void;
+  resetweatherConditions: () => void;
 };
 
 export const WeatherContext = createContext<WeatherContextType | null>(null);
@@ -70,6 +71,32 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
     }
   );
 
+  const resetweatherConditions = () => {
+    setWeatherConditions({
+      currentWeather: {
+        temperature: 0,
+        description: "",
+        windSpeed: 0,
+        weatherCode: 0,
+      },
+      todayWeather: {
+        time: undefined,
+        temperature: [],
+        description: [],
+        windSpeed: [],
+        weatherCode: [],
+      },
+      weeklyWeather: {
+        date: [],
+        minTemperature: [],
+        maxTemperature: [],
+        description: [],
+        weatherCode: [],
+      },
+    });
+    setLocation("");
+  };
+
   useEffect(() => {
     askGeolocationPermission();
   }, []);
@@ -85,9 +112,11 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
         await setGeolocationText();
       } else if (permissionGranted === "denied") {
         setError("Location permission not granted");
+        resetweatherConditions();
       }
     } catch (error) {
       setError("Error requesting geolocation permission");
+      resetweatherConditions();
     }
   };
 
@@ -109,11 +138,18 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
       setWeatherConditions(weather);
     } catch (error) {
       console.error("Failed to update weather conditions:", error);
+      resetweatherConditions();
       setError("Error fetching weather data");
     }
   };
 
   const setGeolocationText = async () => {
+    console.log("Setting geolocation text", geoLocationPermission);
+    if (geoLocationPermission !== "granted") {
+      setError("Location permission not granted");
+      resetweatherConditions();
+      return;
+    }
     try {
       setError(null);
       const location = await getCurrentCoordinates();
@@ -123,6 +159,7 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
       setLocation(`${location.name}, ${location.admin1}, ${location.country}`);
       updateWeatherConditions(location);
     } catch (error) {
+      resetweatherConditions();
       setError("Error fetching location or weather data");
     }
   };
@@ -141,6 +178,7 @@ function WeatherContextProvider({ children }: ContextProviderProps) {
         updateWeatherConditions,
         error,
         setError,
+        resetweatherConditions,
       }}
     >
       {children}
