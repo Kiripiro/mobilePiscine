@@ -34,7 +34,9 @@
     "react-native-svg": "^15.10.1",
     "react-native-tab-view": "^4.0.5",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.2"
+    "react-native-webview": "13.12.2",
+    "expo-constants": "~17.0.3",
+    "expo-linking": "~7.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

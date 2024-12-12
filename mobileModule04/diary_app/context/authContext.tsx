@@ -13,7 +13,7 @@ type AuthContextType = {
   user: User | null;
   setUser: (user: User) => void;
   loading: boolean;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }: ContextProviderProps) => {
       setLoading(false);
     };
 
+    console.log(user);
     loadUser();
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -57,8 +58,7 @@ export const AuthProvider = ({ children }: ContextProviderProps) => {
     });
 
     return () => unsubscribe();
-  }),
-    [];
+  }, []);
 
   const logout = async () => {
     await signOut(auth);
