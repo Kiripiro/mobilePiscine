@@ -28,7 +28,7 @@ export default function EntryDetail({ entry, onClose }: EntryDetailProps) {
 
   const handleDeleteEntry = () => {
     if (selectedEntry) {
-      deleteEntry(selectedEntry.id);
+      deleteEntry(selectedEntry);
       setSelectedEntry(null);
       onClose();
     }

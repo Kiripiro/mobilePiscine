@@ -12,7 +12,7 @@ import { useAuth } from "./authContext";
 type EntriesContextType = {
   entries: Entry[];
   addEntry: (entry: Entry) => void;
-  deleteEntry: (id: string) => void;
+  deleteEntry: (entry: Entry) => void;
   clearEntries: () => void;
 };
 
@@ -51,13 +51,18 @@ export const EntriesProvider = ({ children }: ContextProviderProps) => {
 
   const addEntry = (entry: Entry) => {
     setEntries([entry, ...entries]);
-    const { id, ...data } = entry;
+    const { ...data } = entry;
     firebaseService.addDocument(data);
   };
 
-  const deleteEntry = (id: string) => {
-    setEntries(entries.filter((entry) => entry.id !== id));
-    firebaseService.deleteDocument(id);
+  const deleteEntry = (entry: Entry) => {
+    // retirer l'entrée supprimée de la liste, par rapport à son titre et le userEmail
+    setEntries(
+      entries.filter(
+        (e) => e.title !== entry.title || e.userEmail !== entry.userEmail
+      )
+    );
+    firebaseService.deleteDocument(entry);
   };
 
   const clearEntries = () => {

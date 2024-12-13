@@ -1,3 +1,4 @@
+import { Entry } from "@/types/Entry";
 import {
   getFirestore,
   collection,
@@ -40,12 +41,25 @@ class FirebaseService {
     }
   }
 
-  public async deleteDocument(docId: string): Promise<void> {
+  public async deleteDocument(entry: Entry): Promise<void> {
     try {
-      await this.ensureCollectionExists();
-      await deleteDoc(doc(this.collectionRef, docId));
+      const q = query(
+        this.collectionRef,
+        where("userEmail", "==", entry.userEmail),
+        where("title", "==", entry.title)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return;
+      }
+
+      querySnapshot.forEach(async (document) => {
+        await deleteDoc(doc(this.collectionRef, document.id));
+      });
     } catch (error) {
-      console.error("Erreur lors de la suppression du document:", error);
+      console.error("Erreur lors de la suppression de l'entrée :", error);
     }
   }
 
