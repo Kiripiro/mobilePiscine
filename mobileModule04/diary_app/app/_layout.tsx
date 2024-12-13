@@ -1,14 +1,17 @@
-import React, { useEffect } from "react";
-import { router, Stack } from "expo-router";
+import React from "react";
+import { Stack } from "expo-router";
 import { AuthProvider, useAuth } from "@/context/authContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { EntriesProvider } from "@/context/entriesContext";
 
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <Layout />
-      </GestureHandlerRootView>
+      <EntriesProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Layout />
+        </GestureHandlerRootView>
+      </EntriesProvider>
     </AuthProvider>
   );
 }
@@ -27,13 +30,20 @@ function Layout() {
           name="login"
           options={{ headerShown: false, gestureEnabled: false }}
         />
-        <Stack.Screen name="+not-found" options={{ title: "Not Found" }} />
+        <Stack.Screen
+          name="+not-found"
+          options={{ headerShown: false, title: "Not Found" }}
+        />
       </Stack>
     );
   }
 
   return (
     <Stack>
+      <Stack.Screen
+        name="index"
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
       <Stack.Screen
         name="(tabs)"
         options={{ headerShown: false, gestureEnabled: false }}

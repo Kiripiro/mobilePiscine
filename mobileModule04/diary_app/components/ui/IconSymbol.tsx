@@ -1,35 +1,40 @@
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { SymbolWeight } from 'expo-symbols';
-import React from 'react';
-import { OpaqueColorValue, StyleProp, TextStyle } from 'react-native';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SymbolWeight } from "expo-symbols";
+import React from "react";
+import { OpaqueColorValue, StyleProp, TextStyle } from "react-native";
 
 // Add your SFSymbol to MaterialIcons/MaterialCommunityIcons mappings here.
 const MAPPING = {
   // See MaterialIcons here: https://icons.expo.fyi
   // See SF Symbols in the SF Symbols app on Mac.
-  'house.fill': { icon: 'home', type: 'MaterialIcons' },
-  'paperplane.fill': { icon: 'send', type: 'MaterialIcons' },
-  'chevron.left.forwardslash.chevron.right': { icon: 'code', type: 'MaterialIcons' },
-  'chevron.right': { icon: 'chevron-right', type: 'MaterialIcons' },
-  'calendar.day.timeline.leading': { icon: 'calendar-view-day', type: 'MaterialIcons' },
-  'calendar.circle': { icon: 'calendar-today', type: 'MaterialIcons' },
-  'calendar': { icon: 'calendar-month', type: 'MaterialIcons' },
-  'location.fill': { icon: 'my-location', type: 'MaterialIcons' },
-  'magnifyingglass': { icon: 'search', type: 'MaterialIcons' },
-  'sun.max.fill': { icon: 'wb-sunny', type: 'MaterialIcons' },
-  'cloud.sun.fill': { icon: 'wb-cloudy', type: 'MaterialIcons' },
-  'sun.rain.fill': { icon: 'umbrella', type: 'MaterialCommunityIcons' },
-  'cloud.bolt.fill': { icon: 'lightning-bolt', type: 'MaterialCommunityIcons' },
-  'cloud.fill': { icon: 'cloud', type: 'MaterialIcons' },
-  'thermometer': { icon: 'thermostat', type: 'MaterialIcons' },
-  'wind': { icon: 'weather-windy', type: 'MaterialCommunityIcons' },
+  "house.fill": { icon: "home", type: "MaterialIcons" },
+  "paperplane.fill": { icon: "send", type: "MaterialIcons" },
+  "chevron.left.forwardslash.chevron.right": {
+    icon: "code",
+    type: "MaterialIcons",
+  },
+  "chevron.right": { icon: "chevron-right", type: "MaterialIcons" },
+  "calendar.day.timeline.leading": {
+    icon: "calendar-view-day",
+    type: "MaterialIcons",
+  },
+  "calendar.circle": { icon: "calendar-today", type: "MaterialIcons" },
+  calendar: { icon: "calendar-month", type: "MaterialIcons" },
+  "xmarkbin.fill": { icon: "delete", type: "MaterialIcons" },
+  "rectangle.portrait.and.arrow.right": {
+    icon: "logout",
+    type: "MaterialIcons",
+  },
+  house: { icon: "home", type: "MaterialIcons" },
 } as Partial<
   Record<
-    import('expo-symbols').SymbolViewProps['name'],
+    import("expo-symbols").SymbolViewProps["name"],
     {
-      icon: React.ComponentProps<typeof MaterialIcons | typeof MaterialCommunityIcons>['name'];
-      type: 'MaterialIcons' | 'MaterialCommunityIcons';
+      icon: React.ComponentProps<
+        typeof MaterialIcons | typeof MaterialCommunityIcons
+      >["name"];
+      type: "MaterialIcons" | "MaterialCommunityIcons";
     }
   >
 >;
@@ -62,12 +67,21 @@ export function IconSymbol({
 
   const { icon, type } = mapping;
 
-  if (type === 'MaterialIcons') {
-    return <MaterialIcons color={color} size={size} name={icon} style={style} />;
+  if (type === "MaterialIcons") {
+    return (
+      <MaterialIcons color={color} size={size} name={icon} style={style} />
+    );
   }
 
-  if (type === 'MaterialCommunityIcons') {
-    return <MaterialCommunityIcons color={color} size={size} name={icon} style={style} />;
+  if (type === "MaterialCommunityIcons") {
+    return (
+      <MaterialCommunityIcons
+        color={color}
+        size={size}
+        name={icon}
+        style={style}
+      />
+    );
   }
 
   return null;

@@ -34,8 +34,6 @@ export default function GoogleSignInButton() {
       const userCredential = await signInWithCredential(auth, credential);
       setUser(userCredential.user);
       router.replace("/home");
-
-      console.log("Utilisateur connecté à Firebase :", userCredential.user);
     } catch (error) {
       console.error("Erreur lors de la connexion à Firebase :", error);
     }
@@ -51,7 +49,7 @@ export default function GoogleSignInButton() {
           style={styles.image}
         />
         <ThemedText style={styles.button} disabled={!request}>
-          Se connecter avec Google
+          Sign in using Google
         </ThemedText>
       </TouchableOpacity>
     </ThemedView>

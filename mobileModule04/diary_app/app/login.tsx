@@ -10,7 +10,6 @@ import { ThemedText } from "@/components/ThemedText";
 export default function LoginScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  console.log("lgin screen", user);
 
   useEffect(() => {
     if (user) router.replace("/(tabs)/home");
@@ -21,7 +20,7 @@ export default function LoginScreen() {
       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
     >
       <ThemedText type="subtitle" style={styles.text}>
-        Authentification
+        Authentication
       </ThemedText>
       <View style={{ height: 130 }}>
         <GoogleSignInButton />

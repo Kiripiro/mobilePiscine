@@ -35,9 +35,7 @@ export default function GithubSignInButton() {
 
   useEffect(() => {
     if (response?.type === "success") {
-      console.log("response", response);
       const { code } = response.params;
-      console.log("code", code);
       signInWithFirebase(code);
     }
   }, [response]);
@@ -57,21 +55,16 @@ export default function GithubSignInButton() {
     });
 
     const { access_token, token_type, scope } = await response.json();
-    console.log("response", response);
     return { access_token, token_type, scope };
   };
 
   const signInWithFirebase = async (code: string) => {
     try {
-      const { access_token, token_type, scope } = await createTokenWithCode(
-        code
-      );
+      const { access_token } = await createTokenWithCode(code);
       const credential = GithubAuthProvider.credential(access_token);
       const userCredential = await signInWithCredential(auth, credential);
       setUser(userCredential.user);
       router.replace("/home");
-
-      console.log("Utilisateur connecté à Firebase :", userCredential.user);
     } catch (error) {
       console.error("Erreur lors de la connexion à Firebase :", error);
     }
@@ -91,7 +84,7 @@ export default function GithubSignInButton() {
           source={require("@/assets/images/github-icon.png")}
           style={styles.image}
         />
-        <ThemedText style={styles.button}>Se connecter avec Github</ThemedText>
+        <ThemedText style={styles.button}>Sign in using Github</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );

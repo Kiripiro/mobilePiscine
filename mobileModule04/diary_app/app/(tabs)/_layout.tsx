@@ -21,7 +21,7 @@ export default function TabLayout() {
     {
       key: "home",
       title: "Home",
-      icon: "home" as IconSymbolName,
+      icon: "house" as IconSymbolName,
     },
   ];
 

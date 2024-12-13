@@ -35,7 +35,7 @@ export default function ThemedTabBar({
             onPress={() => onTabPress(i)}
             style={styles.tabItem}
           >
-            <IconSymbol size={28} name={route.icon} color={color} />
+            <IconSymbol size={28} name={route.icon} color={"#4285F4"} />
             <ThemedText>{route.title}</ThemedText>
           </TouchableOpacity>
         );

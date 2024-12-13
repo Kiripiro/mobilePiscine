@@ -4,7 +4,6 @@ import { useRouter } from "expo-router";
 import { useAuth } from "@/context/authContext";
 
 export default function IndexScreen() {
-  console.log("main index");
   const { user } = useAuth();
   const router = useRouter();
 
