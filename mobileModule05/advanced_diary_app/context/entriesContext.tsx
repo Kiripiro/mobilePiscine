@@ -56,7 +56,6 @@ export const EntriesProvider = ({ children }: ContextProviderProps) => {
   };
 
   const deleteEntry = (entry: Entry) => {
-    // retirer l'entrée supprimée de la liste, par rapport à son titre et le userEmail
     setEntries(
       entries.filter(
         (e) => e.title !== entry.title || e.userEmail !== entry.userEmail
